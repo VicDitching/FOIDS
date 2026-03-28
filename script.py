@@ -1,6 +1,7 @@
 import os 
 import json 
-import tkinter import messagebox, ttk 
+import tkinter as tk
+from tkinter import messagebox, ttk 
 import platform 
 from pathlib import Path
 
@@ -34,23 +35,22 @@ class FOIDS:
         try: 
             with open('rules.json', 'r') as f: 
                 return json.load(f)
-            except Exception as e: 
+        except Exception as e: 
                 #error handling if JSON is missing or malformed 
                 print(f"Error loading configuration: {e}")
                 return {}
     
     def create_components(self):
-
+        return
     
     def scanner(self):
-
+        return
     
     def confirmation(self):
         #safety check to ensure user intent before permanently deleting the selected files
         #Trace Tags: FR-05, SR-03
         if messagebox.askyesno("Confirm Deletion", "Are you sure? This will permanently delete the selected files."):
             self.run_deletion()
-    
-    def deletion(self):
 
-    
+    def deletion(self):
+        return
