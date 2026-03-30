@@ -1,0 +1,71 @@
+{
+  "foid-categories": [
+    {
+      "name": "Win11 Temp Files",
+      "paths": ["C:/Windows/Temp"],
+      "patterns": ["*"]
+    }
+
+    {
+      "name": "Browser Cache",
+      "description": "Temporary files stored by browsers to speed up page loading",
+      "paths": [
+        "C:/Users/{user}/AppData/Local/Google/Chrome/User Data/*/Cache",
+        "C:/Users/{user}/AppData/Local/Google/Chrome/User Data/*/Code Cache",
+
+        "C:/Users/{user}/AppData/Local/Microsoft/Edge/User Data/*/Cache",
+        "C:/Users/{user}/AppData/Local/Microsoft/Edge/User Data/*/Code Cache",
+
+        "C:/Users/{user}/AppData/Local/Mozilla/Firefox/Profiles/*/cache2",
+
+        "C:/Users/{user}/AppData/Local/BraveSoftware/Brave-Browser/User Data/*/Cache",
+        "C:/Users/{user}/AppData/Local/BraveSoftware/Brave-Browser/User Data/*/Code Cache",
+
+        "C:/Users/{user}/AppData/Roaming/Opera Software/Opera Stable/Cache",
+        "C:/Users/{user}/AppData/Roaming/Opera Software/Opera Stable/Code Cache"
+      ],
+      "patterns": ["*"]
+
+    }
+
+    {
+      "name": "Windows Crash Dumps",
+      "description": "Error Files Created by Windows after applications crash or Windows encounters an error",
+      "paths": [
+        "C:/Windows/Minidump",
+
+        "C:/Users/{user}/AppData/Local/CrashDumps",
+
+       "C:/ProgramData/Microsoft/Windows/WER/ReportArchive",
+
+        "C:/ProgramData/Microsoft/Windows/WER/ReportQueue",
+
+        "C:/ProgramData/Microsoft/Windows/WER/Temp"
+    ],
+      "patterns": ["*.dmp", "*.mdmp", "*.hdmp"]
+
+    }
+      
+  {
+    "name": "Windows Recycle Bin",
+    "description": "All files placed in the Recycle Bin",
+    "paths": [
+    "C:/$Recycle.Bin/*",
+    "D:/$Recycle.Bin/*"
+      ],
+    "patterns": ["*"]
+
+  }
+
+  {
+  "name": "Application Cache",
+  "description": "Temporary Safe Application Cache from various applications",
+  "paths": [
+    "C:/Users/{user}/AppData/Local/*/Cache",
+    "C:/Users/{user}/AppData/Local/*/Code Cache",
+    "C:/Users/{user}/AppData/Local/*/GPUCache"
+  ],
+  "patterns": ["*"]
+}
+]
+}
