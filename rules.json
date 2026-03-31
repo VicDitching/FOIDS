@@ -1,71 +1,91 @@
 {
-  "foid-categories": [
+  "foid_categories": [
     {
+      "id": "win11_temp_files",
       "name": "Win11 Temp Files",
-      "paths": ["C:/Windows/Temp"],
-      "patterns": ["*"]
-    }
-
+      "description": "Temporary files stored in the Windows temp directory",
+      "paths": [
+        "C:/Windows/Temp"
+      ],
+      "patterns": ["*"],
+      "enabled_by_default": true,
+      "recursive": true
+    },
     {
+      "id": "browser_cache",
       "name": "Browser Cache",
       "description": "Temporary files stored by browsers to speed up page loading",
       "paths": [
         "C:/Users/{user}/AppData/Local/Google/Chrome/User Data/*/Cache",
         "C:/Users/{user}/AppData/Local/Google/Chrome/User Data/*/Code Cache",
-
         "C:/Users/{user}/AppData/Local/Microsoft/Edge/User Data/*/Cache",
         "C:/Users/{user}/AppData/Local/Microsoft/Edge/User Data/*/Code Cache",
-
         "C:/Users/{user}/AppData/Local/Mozilla/Firefox/Profiles/*/cache2",
-
         "C:/Users/{user}/AppData/Local/BraveSoftware/Brave-Browser/User Data/*/Cache",
         "C:/Users/{user}/AppData/Local/BraveSoftware/Brave-Browser/User Data/*/Code Cache",
-
         "C:/Users/{user}/AppData/Roaming/Opera Software/Opera Stable/Cache",
         "C:/Users/{user}/AppData/Roaming/Opera Software/Opera Stable/Code Cache"
       ],
-      "patterns": ["*"]
-
-    }
-
+      "patterns": ["*"],
+      "enabled_by_default": true,
+      "recursive": true
+    },
     {
+      "id": "windows_crash_dumps",
       "name": "Windows Crash Dumps",
-      "description": "Error Files Created by Windows after applications crash or Windows encounters an error",
+      "description": "Error files created by Windows after application or system crashes",
       "paths": [
         "C:/Windows/Minidump",
-
         "C:/Users/{user}/AppData/Local/CrashDumps",
-
-       "C:/ProgramData/Microsoft/Windows/WER/ReportArchive",
-
+        "C:/ProgramData/Microsoft/Windows/WER/ReportArchive",
         "C:/ProgramData/Microsoft/Windows/WER/ReportQueue",
-
         "C:/ProgramData/Microsoft/Windows/WER/Temp"
-    ],
-      "patterns": ["*.dmp", "*.mdmp", "*.hdmp"]
-
-    }
-      
-  {
-    "name": "Windows Recycle Bin",
-    "description": "All files placed in the Recycle Bin",
-    "paths": [
-    "C:/$Recycle.Bin/*",
-    "D:/$Recycle.Bin/*"
       ],
-    "patterns": ["*"]
-
-  }
-
-  {
-  "name": "Application Cache",
-  "description": "Temporary Safe Application Cache from various applications",
-  "paths": [
-    "C:/Users/{user}/AppData/Local/*/Cache",
-    "C:/Users/{user}/AppData/Local/*/Code Cache",
-    "C:/Users/{user}/AppData/Local/*/GPUCache"
-  ],
-  "patterns": ["*"]
-}
-]
+      "patterns": ["*.dmp", "*.mdmp", "*.hdmp"],
+      "enabled_by_default": false,
+      "recursive": true
+    },
+    {
+      "id": "windows_recycle_bin",
+      "name": "Windows Recycle Bin",
+      "description": "Files placed in the Recycle Bin",
+      "paths": [
+        "C:/$Recycle.Bin/*",
+        "D:/$Recycle.Bin/*"
+      ],
+      "patterns": ["*"],
+      "enabled_by_default": false,
+      "recursive": true
+    },
+    {
+      "id": "application_cache",
+      "name": "Application Cache",
+      "description": "Temporary safe application cache from various applications",
+      "paths": [
+        "C:/Users/{user}/AppData/Local/*/Cache",
+        "C:/Users/{user}/AppData/Local/*/Code Cache",
+        "C:/Users/{user}/AppData/Local/*/GPUCache"
+      ],
+      "patterns": ["*"],
+      "enabled_by_default": true,
+      "recursive": true
+    },
+    {
+      "id": "log_files",
+      "name": "Log Files",
+      "description": "Files that record what the system or an application has done",
+      "paths": [
+        "C:/Windows/Logs",
+        "C:/Users/{user}/AppData/Local/Temp",
+        "C:/Users/{user}/AppData/Local/*/Logs",
+        "C:/Users/{user}/AppData/Roaming/*/Logs",
+        "C:/ProgramData/Microsoft/Windows/WER/ReportArchive",
+        "C:/ProgramData/Microsoft/Windows/WER/ReportQueue"
+      ],
+      "patterns": ["*.log", "*.etl"],
+      "max_age_days": 7,
+      "enabled_by_default": true,
+      "recursive": true
+    }
+  ]
 }
