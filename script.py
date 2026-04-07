@@ -5,6 +5,7 @@ from tkinter import messagebox, ttk
 import platform 
 from pathlib import Path
 import glob
+import time
 
 class FOIDS:
     def __init__(self, root):
@@ -78,3 +79,55 @@ class FOIDS:
             return [path]
         
         return []
+    def get_category_targets (self, category):
+         
+         targets = []
+
+         for raw_path in category.get("paths", []):
+            resolved_path = self.replace_placeholders(raw_path)
+            expanded_paths = self.expand_path(resolved_path)
+            targets.extend(expanded_paths)
+
+        return targets
+
+    def age_check(self, file_path, category):
+        max_age_days = category.get("max_age_days")
+
+        if max_age_days is None:
+            return True
+        
+        try:
+        modified_time = os.path.getmtime(file_path)
+        current_time = time.time()
+        age_days = (current_time - modified_time) / 86400
+        return age_days > max_age_days
+    except Exception:
+        return False
+
+    def scan_category(self, category):
+        matched_files = []
+        targets = self.get_category_targets(category)
+        patterns = category.get("patterns", ["*"])
+        recursive = category.get("recursive", False)
+
+        for target in targets:
+            for pattern in patterns:
+                try:
+                    search_pattern = os.path.join(target, "**", pattern) if recursive else os.path.join(target, pattern)
+                    found_paths = glob.glob(search_pattern, recursive=recursive)
+
+                    for found_path in found_paths:
+                        if os.path.isfile(found_path) and self.passes_age_rule(found_path, category):
+                        matched_files.append({
+                            "category_id": category.get("id"),
+                            "category_name": category.get("name"),
+                            "file_path": found_path,
+                            "size": os.path.getsize(found_path)
+                        })
+                except Exception as e:
+                    print(f"Error scanning target {target}: {e}")
+
+    return matched_files
+
+
+        
