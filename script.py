@@ -4,9 +4,10 @@ import tkinter as tk
 from tkinter import messagebox, ttk 
 import platform 
 from pathlib import Path
+import glob
 
 class FOIDS:
-    def __initialization__(self, root):
+    def __init__(self, root):
         #SDD_LDD_PY_GUI_001: Initialize the main application window
         #Trace Tags: FR-04, IR-02
         self.root = root
@@ -52,5 +53,25 @@ class FOIDS:
         if messagebox.askyesno("Confirm Deletion", "Are you sure? This will permanently delete the selected files."):
             self.run_deletion()
 
-    def deletion(self):
-        return
+    def replace_placeholders(self, path):
+        #function used to switch out placeholder usernames 
+        current_user = os.environ.get("USERNAME") or os.getlogin()
+            
+        #holding dictionary for users
+        placeholderDict = {
+            "{user}" : current_user
+        }
+
+        for key, value in placeholderDict.items():
+            path = path.replace(key, value)
+
+        return path
+    
+    def expand_path(self, path):
+        if "*" in path or "?" in path:
+            return glob.glob(path)
+        
+        if os.path.exists(path):
+            return [path]
+        
+        return []
