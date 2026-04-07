@@ -51,8 +51,11 @@ class FOIDS:
         #safety check to ensure user intent before permanently deleting the selected files
         #Trace Tags: FR-05, SR-03
         if messagebox.askyesno("Confirm Deletion", "Are you sure? This will permanently delete the selected files."):
-            self.run_deletion()
+            self.delete()
 
+    def delete(self):
+        return
+        
     def replace_placeholders(self, path):
         #function used to switch out placeholder usernames 
         current_user = os.environ.get("USERNAME") or os.getlogin()
