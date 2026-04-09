@@ -27,7 +27,7 @@ class FOIDSApp:
         self.vars = {}
         self.scan_results = []
 
-        self.status = tk.StringVar(value='Ready to FOID')
+        self.status = tk.StringVar(value='IDLE')
         self.space = tk.StringVar(value='Estimated space: 0.00 MB (New slang for "MegaBytes")')
         self.count = tk.StringVar(value='Files found: 0')
 
@@ -185,7 +185,7 @@ class FOIDSApp:
         self.output.delete('1.0', 'end')
         self.space.set('Estimated space: 0.00 MB (new slang for "Megabytes")')
         self.count.set('Files found: 0')
-        self.status.set('Ready to FOID')
+        self.status.set('READY')
 
 
 if __name__ == '__main__':
