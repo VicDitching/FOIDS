@@ -1,19 +1,17 @@
+#SDD_HLD_CONFIG_001: standard library imports for file system operations 
+#Trace Tags: FR-01, FR-02, DC-01
+
 # Standard library imports for file system operations
 import os
-
 # Used to load and parse JSON rules
 import json
-
 # GUI framework
 import tkinter as tk
 from tkinter import messagebox, ttk
-
 # Used to check operating system compatibility
 import platform
-
 # Used for wildcard path expansion (e.g., * and ?)
 import glob
-
 # Used for time calculations (file age filtering)
 import time
 
@@ -28,7 +26,8 @@ class FOIDS:
             self.root.title("FOIDS Cleanup Tool")
             self.root.geometry("450x500")
 
-        # ESR-01: Ensure application runs only on Windows systems
+        # ESR-01/NFR-01: Ensure application runs only on Windows systems
+        #Trace Tags: BO-04, ESR-01
         if platform.system() != "Windows":
             if self.root is not None:
                 messagebox.showerror("OS Error", "This tool is specifically for Windows 11")
@@ -38,24 +37,28 @@ class FOIDS:
             return
 
         # SDD_HLD_CONFIG_001: Load rules from external JSON config
+        #Trace Tags: DC-02, FR-01
         self.rules = self.load_configuration()
 
-        # Data structure to store scan results
+        # SDD_HLD_SCAN_002: data structure to store scan results
+        #Trace Tags: FR-03, UR-02
         self.scan_results = []
 
         # IR-03: Stores checkbox state for each category (used by GUI)
+        #Trace Tags: FR-04, UC-02
         self.category_states = {}
 
         if self.root is not None:
             self.create_components()
 
     def log(self, message):
-        # Utility logging function (can be redirected to GUI later)
+        # UC-03: utility logging function (can be redirected to GUI later)
+        #Trace Tags: FR-07, BO-02
         print(message)
 
     def load_configuration(self):
-        # DC-02: Parse JSON configuration file
-        # Trace Tags: SDD_HLD_CONFIG_001
+        # SDD_LDD_PY_JSON_001: Parse JSON configuration file
+        # Trace Tags: SDD_HLD_CONFIG_001, DC-02, FR-01
         try:
             with open("foidRules.json", "r", encoding="utf-8") as f:
                 return json.load(f)
@@ -64,24 +67,78 @@ class FOIDS:
             return {}
 
     def create_components(self):
-        return 
+        #SDD_HLD_SCAN_003 : implemntation of the desktop GUI components including category checkboxes and action buttons
+        #Trace Tags: IR-02, FR-04, IR-01
+
+        #main header
+        header = tk.Label(self.root, text="FOIDS", font=("Arial", 14, "bold"))
+        header.pack(pady=10)
+
+        #SDD_HLD_CONFIG_001: creates container for rule-based category selection 
+        #Trace Tags: DC-02, FR-04
+        self.check_frame = tk.LabelFrame(self.root, text="Cleanup Categories", padx=10, pady=10)
+        self.check_frame.pack(padx=20, pady=10, fill="both")
+
+        #SDD_LDD_PY_JSON_001: dynamically build checkboxes based on the JSON Rule Set
+        #Trace Tags: IR-03, DC-02, UC-02
+        for category in self.rules.get("foid_categories", []):
+            cat_id = category.get("id")
+            cat_name = category.get("name")
+
+            #initializes state as true (checked) by default
+            var = tk.BooleanVar(value=True)
+            self.category_states[cat_id] = var
+
+            cb = tk.Checkbutton(self.check_frame, text=cat_name, variable=var)
+            cb.pack(anchor="w")
+        #SDD_LDD_PY_GUI_001: status and estimation label 
+        #Trace Tags: FR-03, IR-02, UR-02
+        self.status_label = tk.Label(self.root, text="Ready to Scan", fg="blue", font=("Arial", 10))
+        self.status_label.pack(pady=20)
+
+        #SDD_HLD_UI_001: interaction buttons for scan and deletion modules
+        #Trace Tags: IR-02, FR-06, IR-01
+        self.scan_btn = tk.Button(self.root, text"1. Scan System", command=self.scanner_ui, width=20)
+        self.scan_btn.pack(pady=5)
+
+        self.del_btn = tk.Button(self.root, text="2. Clean Files", command=self.confirmation, state=tk.DISABLED, width=20, bg="#ffccc")
+        self.del_btn.pack(pady=5)
         
     def scanner_ui(self):
+        #SDD_HLD_UI_002: manages UI state and responsiveness durig active scanning
+        #Trace Tags: PR-01, BO-03
         selected_ids = [cid for cid, var in self.category_states.items() if var.get()]
         
+        if not selected_ids: 
+            messagebox.showwarning("Selection Required", "Please select at least one category.")
+            return 
+
         self.status_label.config(text="Scanning...")
         self.root.update()
         
+        #SDD_HLD_SCAN_001: executes the scanner logic with selected categories
+        #Trace Tags: FR-01, FR-02
         self.scanner(selected_category_ids=selected_ids)
         
+        #SDD_LDD_PY_OS_001: calculates aggregated file sizes for accurate space estimates
+        #Trace Tags: FR-03, SDD_HLD_SCAN_002
         total_size = sum(item["size"] for item in self.scan_results)
+
+        #SDD_HLD_DELETE_003: updates GUI with summary of files found 
+        #Trace Tags: FR-08, UR-05, UR-02
+        readable_size = self.format_size(total_size)
         self.status_label.config(text=f"Found {len(self.scan_results)} files ({self.format_size(total_size)})")
         
+        #FR-06: enables deletion engine button if file exist
+        #Trace Tags: SDD_HLD_DELETE_002, UC-02
         if self.scan_results:
             self.del_btn.config(state=tk.NORMAL)
+        else: 
+            self.del_btn.config(state=tk.DISABLED)
 
     def scanner(self, selected_category_ids=None):
-        #Scan system based on selected categories
+        #SDD_HLD_SCAN_001: scan system based on JSON paths and patterns 
+        #Trace Tags: FR-01, FR-02, SR-01
         self.scan_results = []
         seen_paths = set()
 
@@ -103,13 +160,15 @@ class FOIDS:
         return self.scan_results
 
     def confirmation(self, dry_run=True):
-        # FR-05, SR-03: Confirm deletion before execution
+        #SDD_HLD_DELETE_001: requires explicit user confirmation before deletion 
+        #Trace Tags: FR-05, UR-04, SR-03
         if dry_run:
             return self.delete(dry_run=True, limit=20)
 
         if self.root is None:
             return self.delete(dry_run=False)
 
+        #SR-03: redundant safety check to ensure user intent is confirmed 
         if messagebox.askyesno(
             "Confirm Deletion",
             "Are you sure? This will permanently delete the selected files?"
@@ -128,6 +187,9 @@ class FOIDS:
         }
 
     def replace_placeholders(self, path):
+        #SDD_LDD_PY_OS_001: resolve windows environment variables for directory traversal 
+        #Trace Tags: FR-01, ESR-01
+
         # Replace placeholders like {user} with actual system values
         current_user = os.environ.get("USERNAME") or os.getlogin()
 
@@ -141,6 +203,9 @@ class FOIDS:
         return path
 
     def expand_path(self, path):
+        #FR-01: limits scanning to JSON-defined paths 
+        #Trace Tags: SR-01, SDD_HLD_SCAN_001
+
         # Expand wildcard paths (*, ?) or validate direct paths
         if "*" in path or "?" in path:
             return glob.glob(path)
@@ -178,7 +243,8 @@ class FOIDS:
             return False
 
     def is_safe_to_delete(self, file_path, category_id=None):
-        # SR-02: Prevent deletion of critical system files
+        #SR-02: specifically protects the OS core
+        #Trace Tags: BO-02, SEC-02, SR-01
         file_path = os.path.abspath(file_path)
 
         protected_extensions = [".dll", ".sys", ".exe", ".msi"]
@@ -224,7 +290,8 @@ class FOIDS:
             return False
 
     def scan_category(self, category):
-        # FR-02: Scan files for a single category
+        #FR-02: Scan files for a single category
+        #Trace Tags: SDD_HLD_SCAN_001, FR-01
         self.log(f"Scanning: {category.get('name')}")
         matched_files = []
         seen_paths = set()
@@ -293,6 +360,9 @@ class FOIDS:
         return rows
 
     def format_size(self, size):
+        #SDD_LDD_PY_OS_001: technical calculation for reclaimed space 
+        #Trace Tags: FR-03, UR-02
+
         # Convert bytes to human-readable format
         for unit in ["B", "KB", "MB", "GB", "TB", "PB"]:
             if size < 1024:
@@ -317,7 +387,8 @@ class FOIDS:
             self.category_states[category.get("id")] = value
 
     def delete(self, dry_run=True, limit=None):
-        # FR-05: Delete files (with safety checks and dry-run support)
+        #SDD_HLD_DELETE_002: execution logic for file removal 
+        #Trace Tags: FR-6, FR-07, BO-02
         deleted_count = 0
         failed_count = 0
         skipped_count = 0
@@ -330,6 +401,7 @@ class FOIDS:
             category_id = item.get("category_id")
 
             try:
+                #SR-02: safety check before actual removal 
                 if not self.is_safe_to_delete(file_path, category_id):
                     self.log(f"[SKIPPED - PROTECTED] {file_path}")
                     protected_count += 1
@@ -339,14 +411,18 @@ class FOIDS:
                     self.log(f"[DRY RUN] Would delete: {file_path}")
                     skipped_count += 1
                 else:
+                    #SEC-02: respect file system permissions during deletion 
                     os.remove(file_path)
                     self.log(f"Deleted: {file_path}")
                     deleted_count += 1
 
             except Exception as e:
+                #SDD_LDD_ERR_HAND_001: handle locked or restricted files
+                #Trace Tag: FR-07, UC-03
                 self.log(f"Failed to delete {file_path}: {e}")
                 failed_count += 1
 
+        #FR-08: return stats for the final summary report 
         return {
             "deleted": deleted_count,
             "failed": failed_count,
@@ -357,10 +433,13 @@ class FOIDS:
 
 
 if __name__ == "__main__":
+    #IR-01: main entry point for the graphical utility 
+    #standard entry point for Windows 11 desktop utility 
     root = tk.Tk()
     app = FOIDS(root)
     root.mainloop()
 
+    #manual CLI fallback for testing purposes
     print("Starting scan...\n")
     results = app.scanner()
     summary_rows = app.get_summary_rows()
