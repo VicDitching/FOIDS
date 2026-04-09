@@ -64,40 +64,8 @@ class FOIDS:
             return {}
 
     def create_components(self):
-        # Setup the UI Container
-        self.main_frame = ttk.Frame(self.root, padding="20")
-        self.main_frame.pack(fill=tk.BOTH, expand=True)
-
-        ttk.Label(self.main_frame, text="Select Categories:", font=("Segoe UI", 10, "bold")).pack(anchor=tk.W)
-
-        # IR-03: Create checkboxes dynamically
-        self.check_frame = ttk.Frame(self.main_frame)
-        self.check_frame.pack(fill=tk.BOTH, expand=True, pady=10)
-
-        for category in self.rules.get("foid_categories", []):
-            cat_id = category.get("id")
-            var = tk.BooleanVar(value=False)
-            chk = ttk.Checkbutton(self.check_frame, text=category.get("name"), variable=var)
-            chk.pack(anchor=tk.W)
-            self.category_states[cat_id] = var
-
-        # Progress and Status
-        self.progress = ttk.Progressbar(self.main_frame, orient=tk.HORIZONTAL, length=300, mode='determinate')
-        self.progress.pack(pady=10, fill=tk.X)
-
-        self.status_label = ttk.Label(self.main_frame, text="Ready")
-        self.status_label.pack(pady=5)
-
-        # Buttons
-        btn_frame = ttk.Frame(self.main_frame)
-        btn_frame.pack(pady=10)
-
-        self.scan_btn = ttk.Button(btn_frame, text="Scan", command=self.scanner_ui)
-        self.scan_btn.pack(side=tk.LEFT, padx=5)
-
-        self.del_btn = ttk.Button(btn_frame, text="Delete", command=self.confirmation, state=tk.DISABLED)
-        self.del_btn.pack(side=tk.LEFT, padx=5)
-
+        return 
+        
     def scanner_ui(self):
         selected_ids = [cid for cid, var in self.category_states.items() if var.get()]
         
