@@ -4,9 +4,9 @@ import os
 # Used to load and parse JSON rules
 import json
 
-# GUI framework (used only when GUI is enabled by Jay)
+# GUI framework
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import messagebox, ttk
 
 # Used to check operating system compatibility
 import platform
@@ -64,8 +64,53 @@ class FOIDS:
             return {}
 
     def create_components(self):
-        # GUI construction handled by Jay
-        return
+        # Setup the UI Container
+        self.main_frame = ttk.Frame(self.root, padding="20")
+        self.main_frame.pack(fill=tk.BOTH, expand=True)
+
+        ttk.Label(self.main_frame, text="Select Categories:", font=("Segoe UI", 10, "bold")).pack(anchor=tk.W)
+
+        # IR-03: Create checkboxes dynamically
+        self.check_frame = ttk.Frame(self.main_frame)
+        self.check_frame.pack(fill=tk.BOTH, expand=True, pady=10)
+
+        for category in self.rules.get("foid_categories", []):
+            cat_id = category.get("id")
+            var = tk.BooleanVar(value=False)
+            chk = ttk.Checkbutton(self.check_frame, text=category.get("name"), variable=var)
+            chk.pack(anchor=tk.W)
+            self.category_states[cat_id] = var
+
+        # Progress and Status
+        self.progress = ttk.Progressbar(self.main_frame, orient=tk.HORIZONTAL, length=300, mode='determinate')
+        self.progress.pack(pady=10, fill=tk.X)
+
+        self.status_label = ttk.Label(self.main_frame, text="Ready")
+        self.status_label.pack(pady=5)
+
+        # Buttons
+        btn_frame = ttk.Frame(self.main_frame)
+        btn_frame.pack(pady=10)
+
+        self.scan_btn = ttk.Button(btn_frame, text="Scan", command=self.scanner_ui)
+        self.scan_btn.pack(side=tk.LEFT, padx=5)
+
+        self.del_btn = ttk.Button(btn_frame, text="Delete", command=self.confirmation, state=tk.DISABLED)
+        self.del_btn.pack(side=tk.LEFT, padx=5)
+
+    def scanner_ui(self):
+        selected_ids = [cid for cid, var in self.category_states.items() if var.get()]
+        
+        self.status_label.config(text="Scanning...")
+        self.root.update()
+        
+        self.scanner(selected_category_ids=selected_ids)
+        
+        total_size = sum(item["size"] for item in self.scan_results)
+        self.status_label.config(text=f"Found {len(self.scan_results)} files ({self.format_size(total_size)})")
+        
+        if self.scan_results:
+            self.del_btn.config(state=tk.NORMAL)
 
     def scanner(self, selected_category_ids=None):
         #Scan system based on selected categories
@@ -101,7 +146,10 @@ class FOIDS:
             "Confirm Deletion",
             "Are you sure? This will permanently delete the selected files?"
         ):
-            return self.delete(dry_run=False)
+            stats = self.delete(dry_run=False)
+            self.del_btn.config(state=tk.DISABLED)
+            self.status_label.config(text="Cleanup Finished")
+            return stats
 
         return {
             "deleted": 0,
@@ -341,7 +389,9 @@ class FOIDS:
 
 
 if __name__ == "__main__":
-    app = FOIDS()
+    root = tk.Tk()
+    app = FOIDS(root)
+    root.mainloop()
 
     print("Starting scan...\n")
     results = app.scanner()
