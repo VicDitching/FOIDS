@@ -28,7 +28,7 @@ class FOIDSApp:
         self.scan_results = []
 
         self.status = tk.StringVar(value='Ready to FOID')
-        self.space = tk.StringVar(value='Estimated space: 0.00 MB (New slang for "Megabytes" for those who know)')
+        self.space = tk.StringVar(value='Estimated space: 0.00 MB (New slang for "MegaBytes")')
         self.count = tk.StringVar(value='Files found: 0')
 
         self.build_ui()
@@ -46,9 +46,7 @@ class FOIDSApp:
 
     def build_ui(self):
         tk.Label(self.root, text='FOIDS', font=('Segoe UI', 18, 'bold')).pack(pady=10)
-        tk.Label(self.root, text='🥶🥶🥶File-Oriented Information Deletion System🥶🥶🥶').pack()
-        tk.Label(self.root, text='Does not stand for anything else, get yo mind out the gutter').pack()
-        
+        tk.Label(self.root, text='File-Oriented Information Deletion System').pack()
 
         frame = tk.LabelFrame(self.root, text='Cleanup Categories', padx=10, pady=10)
         frame.pack(fill='x', padx=10, pady=10)
@@ -64,7 +62,7 @@ class FOIDSApp:
         tk.Button(btns, text='Scan', width=12, command=self.scan).pack(side='left', padx=5)
         tk.Button(btns, text='Delete', width=12, command=self.delete_files).pack(side='left', padx=5)
         tk.Button(btns, text='Clear', width=12, command=self.clear_results).pack(side='left', padx=5)
-        tk.Button(btns, text='Spin Dreidel', width=12, command=self.clear_results).pack(side='left', padx=5)
+        
 
         tk.Label(self.root, textvariable=self.space, font=('Segoe UI', 11, 'bold')).pack()
         tk.Label(self.root, textvariable=self.count).pack(pady=(0, 8))
@@ -91,33 +89,33 @@ class FOIDSApp:
         patterns = category.get('patterns', ['*'])
         recursive = category.get('recursive', False)
 
-        for target in self.category_targets(category):
-            if os.path.isfile(target):
-                files = [target]
+        for t in self.category_targets(category):
+            if os.path.isfile(t):
+                files = [t]
             else:
                 files = []
                 if recursive:
-                    for root, _, names in os.walk(target):
+                    for root, _, names in os.walk(t):
                         for name in names:
                             files.append(os.path.join(root, name))
                 else:
                     try:
-                        for name in os.listdir(target):
-                            p = os.path.join(target, name)
+                        for name in os.listdir(t):
+                            p = os.path.join(t, name)
                             if os.path.isfile(p):
                                 files.append(p)
                     except OSError:
                         continue
 
-            for file_path in files:
-                name = os.path.basename(file_path)
+            for fileP in files:
+                name = os.path.basename(fileP)
                 if any(fnmatch.fnmatch(name, pat) for pat in patterns):
                     try:
                         matches.append({
                             'category_id': category['id'],
                             'category_name': category['name'],
-                            'file_path': file_path,
-                            'size': os.path.getsize(file_path),
+                            'file_path': fileP,
+                            'size': os.path.getsize(fileP),
                         })
                     except OSError:
                         pass
