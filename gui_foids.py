@@ -28,7 +28,7 @@ class FOIDSApp:
         self.scan_results = []
 
         self.status = tk.StringVar(value='IDLE')
-        self.space = tk.StringVar(value='Estimated space: 0.00 MB (New slang for "MegaBytes")')
+        self.space = tk.StringVar(value='Estimated space: 0.00 MB')
         self.count = tk.StringVar(value='Files found: 0')
 
         self.build_ui()
@@ -45,8 +45,8 @@ class FOIDSApp:
         return data
 
     def build_ui(self):
-        tk.Label(self.root, text='FOIDS', font=('Segoe UI', 18, 'bold')).pack(pady=10)
-        tk.Label(self.root, text='File-Oriented Information Deletion System').pack()
+        tk.Label(self.root, text='File-Oriented Information Deletion System', font=('Segoe UI', 18, 'bold')).pack(pady=10)
+        tk.Label(self.root, text='FOIDS').pack()
 
         frame = tk.LabelFrame(self.root, text='Cleanup Categories', padx=10, pady=10)
         frame.pack(fill='x', padx=10, pady=10)
@@ -183,7 +183,7 @@ class FOIDSApp:
     def clear_results(self):
         self.scan_results = []
         self.output.delete('1.0', 'end')
-        self.space.set('Estimated space: 0.00 MB (new slang for "Megabytes")')
+        self.space.set('Estimated space: 0.00 MB')
         self.count.set('Files found: 0')
         self.status.set('READY')
 
