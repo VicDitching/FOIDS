@@ -98,7 +98,7 @@ class FOIDS:
 
         #SDD_HLD_UI_001: interaction buttons for scan and deletion modules
         #Trace Tags: IR-02, FR-06, IR-01
-        self.scan_btn = tk.Button(self.root, text"1. Scan System", command=self.scanner_ui, width=20)
+        self.scan_btn = tk.Button(self.root, text="1. Scan System", command=self.scanner_ui, width=20)
         self.scan_btn.pack(pady=5)
 
         self.del_btn = tk.Button(self.root, text="2. Clean Files", command=self.confirmation, state=tk.DISABLED, width=20, bg="#ffccc")
