@@ -25,6 +25,7 @@ class FOIDSApp:
 
         self.rules = self.load_rules()
         self.vars = {}
+        self.select_all = tk.BooleanVar(value=False)
         self.scan_results = []
 
         self.status = tk.StringVar(value='IDLE')
@@ -50,6 +51,14 @@ class FOIDSApp:
 
         frame = tk.LabelFrame(self.root, text='Cleanup Categories', padx=10, pady=10)
         frame.pack(fill='x', padx=10, pady=10)
+        
+        tk.Checkbutton(
+            frame,
+            text='Select All',
+            variable = self.select_all,
+            command=self.toggle_select_all,
+            font=('Segoe UI', 10, 'bold')
+            ).pack(anchor='w')
 
         for category in self.rules.get('foid_categories', []):
             cid = category['id']
@@ -186,6 +195,11 @@ class FOIDSApp:
         self.space.set('Estimated space: 0.00 MB')
         self.count.set('Files found: 0')
         self.status.set('READY')
+        
+    def toggle_select_all(self):
+        value = self.select_all.get()
+        for var in self.vars.values():
+            var.set(value)
 
 
 if __name__ == '__main__':
@@ -193,3 +207,4 @@ if __name__ == '__main__':
     app = FOIDSApp(root)
     if root.winfo_exists():
         root.mainloop()
+
