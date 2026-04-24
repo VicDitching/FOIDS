@@ -2,7 +2,7 @@
 SE 300 Project
 
 # DESCRIPTION
-This application is designed to delete bulky, unnecessary files on your desktop. These include:
+This application is designed to delete bulky, unnecessary files on your desktop. These include:\n
 -Win11 Temp Files
 -Browser Cache
 -Windows Crash Dumps
