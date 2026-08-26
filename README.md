@@ -29,7 +29,7 @@ Extract all files with the default Windows 11 settings
 
 
 # Help
-Submit a form at aka.ms/confidential or email mantinib@my.erau.edu regarding any questions or bug reports
+Email mantinib@my.erau.edu regarding any questions or bug reports
 
 # Authors
 Jay Nergard, Victoria Ditching, Bella Mantini, Zack Audis
